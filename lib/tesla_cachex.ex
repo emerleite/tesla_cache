@@ -32,9 +32,9 @@
     {:hit, env}
   end
 
-  defp set_to_cache({:hit, env}, _ttl), do: env
-  defp set_to_cache({:miss, env}, ttl) do
-    Cachex.set(:tesla_cache, env.url, env.body, ttl: ttl)
-    env
+  defp set_to_cache({:miss, %Tesla.Env{status: status, body: body, url: url}}, ttl) when status == 200 do
+    Cachex.set(:tesla_cache, url, body, ttl: ttl)
   end
+  defp set_to_cache({:miss, env}, _ttl), do: env
+  defp set_to_cache({:hit, env}, _ttl), do: env
 end
