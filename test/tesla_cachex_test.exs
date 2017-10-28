@@ -70,4 +70,24 @@ defmodule Tesla.Middleware.CacheXTest do
       assert Agent.get(:http_call_count, fn state -> state end) == 2
     end
   end
+
+  describe "when the HTTP Request method is not GET" do
+    test "should not cache POST response" do
+      Client.post("/200_OK", "data")
+      Client.post("/200_OK", "data")
+      assert Agent.get(:http_call_count, fn state -> state end) == 2
+    end
+
+    test "should not cache PUT response" do
+      Client.put("/200_OK", "data")
+      Client.put("/200_OK", "data")
+      assert Agent.get(:http_call_count, fn state -> state end) == 2
+    end
+
+    test "should not cache DELETE response" do
+      Client.delete("/200_OK")
+      Client.delete("/200_OK")
+      assert Agent.get(:http_call_count, fn state -> state end) == 2
+    end
+  end
 end

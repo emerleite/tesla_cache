@@ -15,15 +15,16 @@
 
   def call(env, next, [ttl: ttl]) do
     env
-    |> get_from_cache
+    |> get_from_cache(env.method)
     |> run(next)
     |> set_to_cache(ttl)
   end
 
-  defp get_from_cache(env) do
+  defp get_from_cache(env, :get) do
     env = Map.update!(env, :body, fn _ -> Cachex.get!(:tesla_cache, env.url) end)
     {env.body, env}
   end
+  defp get_from_cache(env, _), do: {nil, env}
 
   defp run({nil, env}, next) do
     {:miss, Tesla.run(env, next)}
