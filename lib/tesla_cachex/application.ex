@@ -11,7 +11,7 @@ defmodule TeslaCachex.Application do
     children = [
       # Starts a worker by calling: TeslaCachex.Worker.start_link(arg)
       # {TeslaCachex.Worker, arg},
-      worker(Cachex, [:tesla_cache, [ttl_interval: true, disable_ode: true], []]),
+      worker(Cachex, [:tesla_cache, [], []]),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
