@@ -21,7 +21,7 @@ defmodule Tesla.Middleware.CacheXTest do
     plug Tesla.Middleware.CacheX, ttl: @ttl
 
     adapter fn(env) ->
-      Agent.update(:http_call_count, fn state -> state + 1 end)
+      increment_http_call_count()
       {status, headers, body} = case env.url do
         "/200_OK" ->
           {200, %{'Content-Type' => 'text/plain'}, "OK"}
@@ -33,25 +33,38 @@ defmodule Tesla.Middleware.CacheXTest do
 
       %{env | status: status, headers: headers, body: body}
     end
+
+    def increment_http_call_count do
+      Agent.update(:http_call_count, fn state -> state + 1 end)
+    end
+
+    def http_call_count do
+      Agent.get(:http_call_count, fn state -> state end)
+    end
   end
 
   describe "when response status code is 200" do
+    setup do
+      [res: Client.get("/200_OK")]
+    end
+
     test "should do the real request in the first call" do
-      Client.get("/200_OK")
-      assert Agent.get(:http_call_count, fn state -> state end) == 1
+      assert Client.http_call_count() == 1
     end
 
     test "should not do the real request in the second call" do
       Client.get("/200_OK")
-      Client.get("/200_OK")
-      assert Agent.get(:http_call_count, fn state -> state end) == 1
+      assert Client.http_call_count() == 1
     end
 
     test "should do the real request again when cache expires" do
-      Client.get("/200_OK")
       Process.sleep(@expired_sleep)
       Client.get("/200_OK")
-      assert Agent.get(:http_call_count, fn state -> state end) == 2
+      assert Client.http_call_count() == 2
+    end
+
+    test "second request should have the same response value as the first one", context do
+      assert context[:res] == Client.get("/200_OK")
     end
   end
 
@@ -59,7 +72,7 @@ defmodule Tesla.Middleware.CacheXTest do
     test "should do the real request in the second call" do
       Client.get("/400_BAD_REQUEST")
       Client.get("/400_BAD_REQUEST")
-      assert Agent.get(:http_call_count, fn state -> state end) == 2
+      assert Client.http_call_count() == 2
     end
   end
 
@@ -67,7 +80,7 @@ defmodule Tesla.Middleware.CacheXTest do
     test "should do the real request in the second call" do
       Client.get("/500_INTERNAL_SERVER_ERROR")
       Client.get("/500_INTERNAL_SERVER_ERROR")
-      assert Agent.get(:http_call_count, fn state -> state end) == 2
+      assert Client.http_call_count() == 2
     end
   end
 
@@ -75,19 +88,19 @@ defmodule Tesla.Middleware.CacheXTest do
     test "should not cache POST response" do
       Client.post("/200_OK", "data")
       Client.post("/200_OK", "data")
-      assert Agent.get(:http_call_count, fn state -> state end) == 2
+      assert Client.http_call_count() == 2
     end
 
     test "should not cache PUT response" do
       Client.put("/200_OK", "data")
       Client.put("/200_OK", "data")
-      assert Agent.get(:http_call_count, fn state -> state end) == 2
+      assert Client.http_call_count() == 2
     end
 
     test "should not cache DELETE response" do
       Client.delete("/200_OK")
       Client.delete("/200_OK")
-      assert Agent.get(:http_call_count, fn state -> state end) == 2
+      assert Client.http_call_count() == 2
     end
   end
 end

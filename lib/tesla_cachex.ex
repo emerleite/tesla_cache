@@ -21,20 +21,20 @@
   end
 
   defp get_from_cache(env, :get) do
-    env = Map.update!(env, :body, fn _ -> Cachex.get!(:tesla_cache, env.url) end)
-    {env.body, env}
+    {Cachex.get!(:tesla_cache, env.url), env}
   end
   defp get_from_cache(env, _), do: {nil, env}
 
   defp run({nil, env}, next) do
     {:miss, Tesla.run(env, next)}
   end
-  defp run({_, env}, _next) do
-    {:hit, env}
+  defp run({cached_env, _env}, _next) do
+    {:hit, cached_env}
   end
 
-  defp set_to_cache({:miss, %Tesla.Env{status: status, body: body, url: url}}, ttl) when status == 200 do
-    Cachex.set(:tesla_cache, url, body, ttl: ttl)
+  defp set_to_cache({:miss, %Tesla.Env{status: status} = env}, ttl) when status == 200 do
+    Cachex.set(:tesla_cache, env.url, env, ttl: ttl)
+    env
   end
   defp set_to_cache({:miss, env}, _ttl), do: env
   defp set_to_cache({:hit, env}, _ttl), do: env
