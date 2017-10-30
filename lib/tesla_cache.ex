@@ -1,4 +1,4 @@
- defmodule Tesla.Middleware.CacheX do
+ defmodule Tesla.Middleware.Cache do
   @behaviour Tesla.Middleware
 
   @moduledoc """
@@ -9,7 +9,7 @@
   defmodule MyClient do
     use Tesla
 
-    plug Tesla.Middleware.CacheX, ttl: :timer.minutes(10)
+    plug Tesla.Middleware.Cache, ttl: :timer.minutes(10)
   end
   """
 
@@ -21,7 +21,7 @@
   end
 
   defp get_from_cache(env, :get) do
-    {Cachex.get!(:tesla_cache, env.url), env}
+    {Cachex.get!(:tesla_cache_cachex, env.url), env}
   end
   defp get_from_cache(env, _), do: {nil, env}
 
@@ -33,7 +33,7 @@
   end
 
   defp set_to_cache({:miss, %Tesla.Env{status: status} = env}, ttl) when status == 200 do
-    Cachex.set(:tesla_cache, env.url, env, ttl: ttl)
+    Cachex.set(:tesla_cache_cachex, env.url, env, ttl: ttl)
     env
   end
   defp set_to_cache({:miss, env}, _ttl), do: env

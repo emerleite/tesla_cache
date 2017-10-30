@@ -10,11 +10,11 @@ use Mix.Config
 
 # You can configure your application as:
 #
-#     config :tesla_cachex, key: :value
+#     config :tesla_cache, key: :value
 #
 # and access this configuration in your application as:
 #
-#     Application.get_env(:tesla_cachex, :key)
+#     Application.get_env(:tesla_cache, :key)
 #
 # You can also configure a 3rd-party app:
 #

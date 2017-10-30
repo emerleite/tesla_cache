@@ -1,9 +1,9 @@
-defmodule TeslaCachex.Mixfile do
+defmodule TeslaCache.Mixfile do
   use Mix.Project
 
   def project do
     [
-      app: :tesla_cachex,
+      app: :tesla_cache,
       version: "0.1.0",
       elixir: "~> 1.4",
       start_permanent: Mix.env == :prod,
@@ -15,7 +15,7 @@ defmodule TeslaCachex.Mixfile do
   def application do
     [
       extra_applications: [:logger],
-      mod: {TeslaCachex.Application, []}
+      mod: {TeslaCache.Application, []}
     ]
   end
 

@@ -4,7 +4,7 @@ defmodule Tesla.Middleware.CacheXTest do
   @expired_sleep 101
 
   setup do
-    Application.ensure_all_started(:tesla_cache)
+    Application.ensure_all_started(:tesla_cache_cachex)
     {:ok, pid} = Agent.start_link(fn -> 0 end, name: :http_call_count)
 
     on_exit fn ->
@@ -18,7 +18,7 @@ defmodule Tesla.Middleware.CacheXTest do
 
     @ttl 100
 
-    plug Tesla.Middleware.CacheX, ttl: @ttl
+    plug Tesla.Middleware.Cache, ttl: @ttl
 
     adapter fn(env) ->
       increment_http_call_count()

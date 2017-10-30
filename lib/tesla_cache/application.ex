@@ -1,4 +1,4 @@
-defmodule TeslaCachex.Application do
+defmodule TeslaCache.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
@@ -11,12 +11,12 @@ defmodule TeslaCachex.Application do
     children = [
       # Starts a worker by calling: TeslaCachex.Worker.start_link(arg)
       # {TeslaCachex.Worker, arg},
-      worker(Cachex, [:tesla_cache, [], []]),
+      worker(Cachex, [:tesla_cache_cachex, [], []]),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: TeslaCachex.Supervisor]
+    opts = [strategy: :one_for_one, name: TeslaCache.Supervisor]
     Supervisor.start_link(children, opts)
   end
 end
