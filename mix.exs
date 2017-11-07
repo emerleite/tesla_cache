@@ -7,7 +7,12 @@ defmodule TeslaCache.Mixfile do
       version: "0.1.0",
       elixir: "~> 1.4",
       start_permanent: Mix.env == :prod,
-      deps: deps()
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls],
+      docs: [
+        main: "readme",
+        extras: ["README.md"]
+      ]
     ]
   end
 
@@ -23,7 +28,9 @@ defmodule TeslaCache.Mixfile do
   defp deps do
     [
       {:cachex, "~> 2.1"},
-      {:tesla, "~> 0.9.0"}
+      {:tesla, "~> 0.9.0"},
+      {:excoveralls,    "~> 0.7.2",  only: :test}
+
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
     ]
