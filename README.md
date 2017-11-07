@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/emerleite/tesla_cache.svg?branch=master)](https://travis-ci.org/emerleite/tesla_cache)
 [![Coverage Status](https://coveralls.io/repos/github/emerleite/tesla_cache/badge.svg?branch=master)](https://coveralls.io/github/emerleite/tesla_cache?branch=master)
+[![codecov](https://codecov.io/gh/emerleite/tesla_cache/branch/master/graph/badge.svg)](https://codecov.io/gh/emerleite/tesla_cache)
 
 TeslaCache is a Basic Cache Middleware for Tesla.
 
