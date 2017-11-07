@@ -1,6 +1,8 @@
 # TeslaCache
 
-**TODO: Add description**
+[![Build Status](https://travis-ci.org/emerleite/tesla_cache.svg?branch=master)](https://travis-ci.org/emerleite/tesla_cache)
+
+TeslaCache is a Basic Cache Middleware for Tesla.
 
 ## Installation
 
