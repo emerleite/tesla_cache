@@ -19,6 +19,16 @@ def deps do
 end
 ```
 
+## Usage:
+
+```elixir
+defmodule GoogleClient do
+  use Tesla
+
+  plug Tesla.Middleware.Cache, ttl: :timer.seconds(2)
+end
+```
+
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/tesla_cache](https://hexdocs.pm/tesla_cache).
