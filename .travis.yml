@@ -20,7 +20,7 @@ matrix:
       otp_release: 20.0
 env:
   - MIX_ENV=test
-script: mix coveralls.json
+script: mix test
 after_script:
   - bash <(curl -s https://codecov.io/bash)
   - MIX_ENV=docs mix deps.get
