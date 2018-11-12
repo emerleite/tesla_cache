@@ -10,9 +10,9 @@ defmodule TeslaCache.Mixfile do
   def project do
     [
       app: :tesla_cache,
-      version: "0.1.1",
+      version: "0.1.2",
       elixir: "~> 1.4",
-      start_permanent: Mix.env == :prod,
+      start_permanent: Mix.env() == :prod,
       description: @description,
       source_url: @project_url,
       homepage_url: @project_url,
@@ -40,14 +40,15 @@ defmodule TeslaCache.Mixfile do
   defp deps do
     [
       {:cachex, "~> 2.1"},
-      {:tesla, "~> 0.10"},
-      {:excoveralls,    "~> 0.7.2",  only: :test},
+      {:tesla, "~> 1.2"},
+      {:excoveralls, "~> 0.7.2", only: :test},
       {:ex_doc, ">= 0.0.0", only: :dev}
 
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
     ]
   end
+
   defp package do
     [
       maintainers: ["Emerson Macedo"],

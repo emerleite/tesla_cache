@@ -7,10 +7,10 @@ defmodule Tesla.Middleware.CacheXTest do
     Application.ensure_all_started(:tesla_cache_cachex)
     {:ok, pid} = Agent.start_link(fn -> 0 end, name: :http_call_count)
 
-    on_exit fn ->
+    on_exit(fn ->
       Process.sleep(@expired_sleep)
       Process.exit(pid, :kill)
-    end
+    end)
   end
 
   defmodule Client do
@@ -18,21 +18,25 @@ defmodule Tesla.Middleware.CacheXTest do
 
     @ttl 100
 
-    plug Tesla.Middleware.Cache, ttl: @ttl
+    plug(Tesla.Middleware.Cache, ttl: @ttl)
 
-    adapter fn(env) ->
+    adapter(fn env ->
       increment_http_call_count()
-      {status, headers, body} = case env.url do
-        "/200_OK" ->
-          {200, %{'Content-Type' => 'text/plain'}, "OK"}
-        "/400_BAD_REQUEST" ->
-          {400, %{'Content-Type' => 'text/plain'}, "Bad Request"}
-        "/500_INTERNAL_SERVER_ERROR" ->
-          {500, %{'Content-Type' => 'text/plain'}, "Internal Server Error"}
-      end
 
-      %{env | status: status, headers: headers, body: body}
-    end
+      {status, headers, body} =
+        case env.url do
+          "/200_OK" ->
+            {200, %{'Content-Type' => 'text/plain'}, "OK"}
+
+          "/400_BAD_REQUEST" ->
+            {400, %{'Content-Type' => 'text/plain'}, "Bad Request"}
+
+          "/500_INTERNAL_SERVER_ERROR" ->
+            {500, %{'Content-Type' => 'text/plain'}, "Internal Server Error"}
+        end
+
+      {:ok, %{env | status: status, headers: headers, body: body}}
+    end)
 
     def increment_http_call_count do
       Agent.update(:http_call_count, fn state -> state + 1 end)
