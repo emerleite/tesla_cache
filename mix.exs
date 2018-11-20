@@ -20,10 +20,10 @@ defmodule TeslaCache.Mixfile do
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
       name: "TeslaCache",
+      source_url: @project_url,
       docs: [
         main: "readme",
-        extras: ["README.md"],
-        source_url: @project_url
+        extras: ["README.md"]
       ]
     ]
   end
@@ -42,7 +42,7 @@ defmodule TeslaCache.Mixfile do
       {:cachex, "~> 2.1"},
       {:tesla, "~> 1.2"},
       {:excoveralls, "~> 0.7.2", only: :test},
-      {:ex_doc, ">= 0.0.0", only: :dev}
+      {:ex_doc, "~> 0.19", only: :dev, runtime: false}
 
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
