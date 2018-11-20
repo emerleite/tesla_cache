@@ -1,4 +1,4 @@
- defmodule Tesla.Middleware.Cache do
+defmodule Tesla.Middleware.Cache do
   @behaviour Tesla.Middleware
 
   @moduledoc """
@@ -13,7 +13,7 @@
   end
   """
 
-  def call(env, next, [ttl: ttl]) do
+  def call(env, next, ttl: ttl) do
     env
     |> get_from_cache(env.method)
     |> run(next)
@@ -23,11 +23,14 @@
   defp get_from_cache(env, :get) do
     {Cachex.get!(:tesla_cache_cachex, env.url), env}
   end
+
   defp get_from_cache(env, _), do: {nil, env}
 
   defp run({nil, env}, next) do
-    {:miss, Tesla.run(env, next)}
+    {:ok, env} = Tesla.run(env, next)
+    {:miss, env}
   end
+
   defp run({cached_env, _env}, _next) do
     {:hit, cached_env}
   end
@@ -36,6 +39,7 @@
     Cachex.set(:tesla_cache_cachex, env.url, env, ttl: ttl)
     env
   end
+
   defp set_to_cache({:miss, env}, _ttl), do: env
   defp set_to_cache({:hit, env}, _ttl), do: env
 end
