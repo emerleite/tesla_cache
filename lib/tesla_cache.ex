@@ -37,9 +37,9 @@ defmodule Tesla.Middleware.Cache do
 
   defp set_to_cache({:miss, %Tesla.Env{status: status} = env}, ttl) when status == 200 do
     Cachex.set(:tesla_cache_cachex, env.url, env, ttl: ttl)
-    env
+    {:ok, env}
   end
 
-  defp set_to_cache({:miss, env}, _ttl), do: env
-  defp set_to_cache({:hit, env}, _ttl), do: env
+  defp set_to_cache({:miss, env}, _ttl), do: {:ok, env}
+  defp set_to_cache({:hit, env}, _ttl), do: {:ok, env}
 end
