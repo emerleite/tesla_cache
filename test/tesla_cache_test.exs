@@ -22,16 +22,21 @@ defmodule Tesla.Middleware.CacheXTest do
 
     adapter(fn env ->
       increment_http_call_count()
-
       {status, headers, body} =
-        case env.url do
-          "/200_OK" ->
+        case {env.url, env.query} do
+          {"/200_OK", []} ->
             {200, %{'Content-Type' => 'text/plain'}, "OK"}
 
-          "/400_BAD_REQUEST" ->
+          {"/200_OK", [param: "a"]} ->
+            {200, %{'Content-Type' => 'text/plain'}, "OK a"}
+
+          {"/200_OK", [param: "b"]} ->
+            {200, %{'Content-Type' => 'text/plain'}, "OK b"}
+
+          {"/400_BAD_REQUEST", _} ->
             {400, %{'Content-Type' => 'text/plain'}, "Bad Request"}
 
-          "/500_INTERNAL_SERVER_ERROR" ->
+          {"/500_INTERNAL_SERVER_ERROR", _} ->
             {500, %{'Content-Type' => 'text/plain'}, "Internal Server Error"}
         end
 
@@ -57,6 +62,10 @@ defmodule Tesla.Middleware.CacheXTest do
       assert context[:res].body == "OK"
     end
 
+    test "result is OK", context do
+      assert context[:res].body == "OK"
+    end
+
     test "should do the real request in the first call" do
       assert Client.http_call_count() == 1
     end
@@ -75,6 +84,34 @@ defmodule Tesla.Middleware.CacheXTest do
     test "second request should have the same response value as the first one", context do
       {:ok, res2} = Client.get("/200_OK")
       assert context[:res] == res2
+    end
+
+    test "request with query params has different response" do
+      {:ok, result} = Client.get("/200_OK", query: [param: "a"])
+      assert result.body == "OK a"
+    end
+
+    test "request with query params should do the real request again" do
+      Client.get("/200_OK", query: [param: "a"])
+      assert Client.http_call_count() == 2
+    end
+
+    test "request with query params should not do the real request in the second call" do
+      Client.get("/200_OK", query: [param: "a"])
+      Client.get("/200_OK", query: [param: "a"])
+      assert Client.http_call_count() == 2
+    end
+
+    test "request with different query params should do the request again" do
+      Client.get("/200_OK", query: [param: "a"])
+      Client.get("/200_OK", query: [param: "b"])
+      assert Client.http_call_count() == 3
+    end
+
+    test "request with different query params should return the correct response" do
+      Client.get("/200_OK", query: [param: "a"])
+      {:ok, result} = Client.get("/200_OK", query: [param: "b"])
+      assert result.body == "OK b"
     end
   end
 
