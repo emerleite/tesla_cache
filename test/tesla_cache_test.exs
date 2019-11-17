@@ -49,7 +49,12 @@ defmodule Tesla.Middleware.CacheXTest do
 
   describe "when response status code is 200" do
     setup do
-      [res: Client.get("/200_OK")]
+      {:ok, res} = Client.get("/200_OK")
+      [res: res]
+    end
+
+    test "should return the body as OK", context do
+      assert context[:res].body == "OK"
     end
 
     test "should do the real request in the first call" do
@@ -68,7 +73,8 @@ defmodule Tesla.Middleware.CacheXTest do
     end
 
     test "second request should have the same response value as the first one", context do
-      assert context[:res] == Client.get("/200_OK")
+      {:ok, res2} = Client.get("/200_OK")
+      assert context[:res] == res2
     end
   end
 
