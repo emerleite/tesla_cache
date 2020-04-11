@@ -10,7 +10,7 @@ defmodule TeslaCache.Mixfile do
   def project do
     [
       app: :tesla_cache,
-      version: "1.0.0",
+      version: "1.1.0",
       elixir: "~> 1.4",
       start_permanent: Mix.env() == :prod,
       description: @description,
