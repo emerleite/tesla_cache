@@ -14,7 +14,7 @@ by adding `tesla_cache` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:tesla_cache, "~> 0.1.2"}
+    {:tesla_cache, "~> 1.0.0"}
   ]
 end
 ```
