@@ -21,7 +21,7 @@ defmodule Tesla.Middleware.Cache do
   end
 
   defp get_from_cache(env, :get) do
-    {Cachex.get!(:tesla_cache_cachex, env.url), env}
+    {Cachex.get!(:tesla_cache_cachex, cache_key(env)), env}
   end
 
   defp get_from_cache(env, _), do: {nil, env}
@@ -36,10 +36,12 @@ defmodule Tesla.Middleware.Cache do
   end
 
   defp set_to_cache({:miss, %Tesla.Env{status: status} = env}, ttl) when status == 200 do
-    Cachex.set(:tesla_cache_cachex, env.url, env, ttl: ttl)
+    Cachex.set(:tesla_cache_cachex, cache_key(env), env, ttl: ttl)
     {:ok, env}
   end
 
   defp set_to_cache({:miss, env}, _ttl), do: {:ok, env}
   defp set_to_cache({:hit, env}, _ttl), do: {:ok, env}
+
+  defp cache_key(%Tesla.Env{url: url, query: query}), do: Tesla.build_url(url, query)
 end
