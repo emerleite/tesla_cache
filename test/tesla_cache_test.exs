@@ -22,25 +22,30 @@ defmodule Tesla.Middleware.CacheXTest do
 
     adapter(fn env ->
       increment_http_call_count()
-      {status, headers, body} =
+      response =
         case {env.url, env.query} do
           {"/200_OK", []} ->
-            {200, %{'Content-Type' => 'text/plain'}, "OK"}
+            {:ok, {200, %{'Content-Type' => 'text/plain'}, "OK"}}
 
           {"/200_OK", [param: "a"]} ->
-            {200, %{'Content-Type' => 'text/plain'}, "OK a"}
+            {:ok, {200, %{'Content-Type' => 'text/plain'}, "OK a"}}
 
           {"/200_OK", [param: "b"]} ->
-            {200, %{'Content-Type' => 'text/plain'}, "OK b"}
+            {:ok, {200, %{'Content-Type' => 'text/plain'}, "OK b"}}
 
           {"/400_BAD_REQUEST", _} ->
-            {400, %{'Content-Type' => 'text/plain'}, "Bad Request"}
+            {:ok, {400, %{'Content-Type' => 'text/plain'}, "Bad Request"}}
 
           {"/500_INTERNAL_SERVER_ERROR", _} ->
-            {500, %{'Content-Type' => 'text/plain'}, "Internal Server Error"}
+            {:ok, {500, %{'Content-Type' => 'text/plain'}, "Internal Server Error"}}
+
+          {"/NETWORK_ERROR", _} -> {:error, :network_error}
         end
 
-      {:ok, %{env | status: status, headers: headers, body: body}}
+      case response do
+        {:ok, {status, headers, body}} -> {:ok, %{env | status: status, headers: headers, body: body}}
+        {:error, reason} -> {:error, reason}
+      end
     end)
 
     def increment_http_call_count do
@@ -147,6 +152,14 @@ defmodule Tesla.Middleware.CacheXTest do
     test "should not cache DELETE response" do
       Client.delete("/200_OK")
       Client.delete("/200_OK")
+      assert Client.http_call_count() == 2
+    end
+  end
+
+  describe "when a network error occurs" do
+    test "should handle error tuple" do
+      Client.get("/NETWORK_ERROR")
+      Client.get("/NETWORK_ERROR")
       assert Client.http_call_count() == 2
     end
   end
