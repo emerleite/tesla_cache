@@ -1,17 +1,7 @@
 defmodule Tesla.Middleware.Cache do
+  @moduledoc false
+
   @behaviour Tesla.Middleware
-
-  @moduledoc """
-  Cache the response for X milliseconds.
-
-  ### Example
-  ```
-  defmodule MyClient do
-    use Tesla
-
-    plug Tesla.Middleware.Cache, ttl: :timer.minutes(10)
-  end
-  """
 
   def call(env, next, ttl: ttl) do
     env
