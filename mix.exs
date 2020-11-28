@@ -7,7 +7,7 @@ defmodule TeslaCache.Mixfile do
   def project do
     [
       app: :tesla_cache,
-      version: "1.1.0",
+      version: "1.1.1",
       elixir: "~> 1.4",
       start_permanent: Mix.env() == :prod,
       description: @description,
@@ -37,7 +37,6 @@ defmodule TeslaCache.Mixfile do
     [
       {:cachex, "~> 2.1"},
       {:tesla, "~> 1.2"},
-
       {:excoveralls, "~> 0.7.2", only: :test},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
