@@ -1,10 +1,7 @@
 defmodule TeslaCache.Mixfile do
   use Mix.Project
 
-  @description """
-  TeslaCache is a middleware for Elixir Tesla HTTP Client
-  """
-
+  @description "TeslaCache is a middleware for Elixir Tesla HTTP Client"
   @project_url "https://github.com/emerleite/tesla_cache"
 
   def project do
@@ -20,15 +17,15 @@ defmodule TeslaCache.Mixfile do
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
       name: "TeslaCache",
-      source_url: @project_url,
       docs: [
         main: "readme",
-        extras: ["README.md"]
+        api_reference: false,
+        extras: ["README.md"],
+        extra_section: []
       ]
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
       extra_applications: [:logger],
@@ -36,16 +33,13 @@ defmodule TeslaCache.Mixfile do
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
       {:cachex, "~> 2.1"},
       {:tesla, "~> 1.2"},
-      {:excoveralls, "~> 0.7.2", only: :test},
-      {:ex_doc, "~> 0.19", only: :dev, runtime: false}
 
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
+      {:excoveralls, "~> 0.7.2", only: :test},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
 
@@ -53,7 +47,7 @@ defmodule TeslaCache.Mixfile do
     [
       maintainers: ["Emerson Macedo"],
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/emerleite/tesla_cache"}
+      links: %{"GitHub" => @project_url}
     ]
   end
 end
