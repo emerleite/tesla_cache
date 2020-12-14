@@ -17,8 +17,10 @@ defmodule Tesla.Middleware.Cache do
   defp get_from_cache(env, _), do: {nil, env}
 
   defp run({nil, env}, next) do
-    {:ok, env} = Tesla.run(env, next)
-    {:miss, env}
+    case Tesla.run(env, next) do
+      {:ok, env} -> {:miss, env}
+      response -> response
+    end
   end
 
   defp run({cached_env, _env}, _next) do
@@ -32,6 +34,7 @@ defmodule Tesla.Middleware.Cache do
 
   defp set_to_cache({:miss, env}, _ttl), do: {:ok, env}
   defp set_to_cache({:hit, env}, _ttl), do: {:ok, env}
+  defp set_to_cache(response, _ttl), do: response
 
   defp cache_key(%Tesla.Env{url: url, query: query}), do: Tesla.build_url(url, query)
 end
