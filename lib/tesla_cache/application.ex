@@ -6,12 +6,12 @@ defmodule TeslaCache.Application do
   use Application
 
   def start(_type, _args) do
-    import Supervisor.Spec, warn: false #To be compatible prior to 1.5 
+    # To be compatible prior to 1.5
+    import Supervisor.Spec, warn: false
     # List all child processes to be supervised
     children = [
-      # Starts a worker by calling: TeslaCachex.Worker.start_link(arg)
       # {TeslaCachex.Worker, arg},
-      worker(Cachex, [:tesla_cache_cachex, [], []]),
+      {Cachex, name: :tesla_cache_cachex}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

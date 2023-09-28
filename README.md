@@ -10,7 +10,7 @@
 [![Last Updated](https://img.shields.io/github/last-commit/emerleite/tesla_cache.svg)](https://github.com/yyy/tesla_cache/commits/master)
 
 TeslaCache is a Basic Cache Middleware for [Tesla](https://hex.pm/packages/tesla).
-It will cache only GET requests for X milliseconds.
+It will cache only GET requests for X milliseconds based on specified request parameters.
 
 ## Installation
 
@@ -31,6 +31,24 @@ defmodule GoogleClient do
   use Tesla
 
   plug Tesla.Middleware.Cache, ttl: :timer.seconds(2)
+end
+```
+
+### Change caching key
+
+Requests are cached based on their `url` by default.
+
+You can change the caching key by passing a `cache_key_generator` function that accepts a `%Tesla.Env{}` struct and returns a term that will be used as the cache key.
+
+```elixir
+defmodule GoogleClient do
+  use Tesla
+
+  plug Tesla.Middleware.Cache,
+    ttl: :timer.seconds(2),
+    cache_key_generator: fn %Tesla.Env{url: url, query: query, headers: headers} ->
+        :crypto.hash(:md5, :erlang.term_to_binary({url, query, headers}))
+    end
 end
 ```
 
